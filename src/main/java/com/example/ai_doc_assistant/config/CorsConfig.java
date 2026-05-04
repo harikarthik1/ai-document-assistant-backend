@@ -14,7 +14,10 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://ai-document-assistant-frontend-drab.vercel.app"
+        ));
 
         config.setAllowedMethods(List.of(
                 "GET",
