@@ -10,4 +10,6 @@ public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> 
     List<ChatHistory> findByUserIdAndDocumentIdOrderByCreatedAtAsc(
             Long userId, Long documentId
     );
+
+    void deleteByUserIdAndDocumentId(Long userId, Long documentId);
 }

@@ -2,7 +2,10 @@ package com.example.ai_doc_assistant.service;
 
 import com.example.ai_doc_assistant.ai.TextExtractionService;
 import com.example.ai_doc_assistant.entity.Document;
+import com.example.ai_doc_assistant.repository.ChatHistoryRepository;
+import com.example.ai_doc_assistant.repository.DocumentChunkRepository;
 import com.example.ai_doc_assistant.repository.DocumentRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.exception.TikaException;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentService {
     private final DocumentRepository documentRepository;
+    private final DocumentChunkRepository chunkRepository;
+    private final ChatHistoryRepository chatHistoryRepository;
     private final String uploadDir = "uploads/";
     private final TextExtractionService textExtractionService;
     private final ChunkService chunkService;
@@ -38,6 +43,16 @@ public class DocumentService {
     }
     public List<Document> getUserDocuments(Long userId){
         return documentRepository.findByUserId(userId);
+    }
+
+    @Transactional
+    public void deleteDocument(Long documentId, Long userId) {
+        Document document = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        chunkRepository.deleteByDocumentId(documentId);
+        chatHistoryRepository.deleteByUserIdAndDocumentId(userId, documentId);
+        documentRepository.delete(document);
     }
 
 }

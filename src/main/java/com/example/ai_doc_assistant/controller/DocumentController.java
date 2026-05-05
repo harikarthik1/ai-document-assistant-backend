@@ -46,4 +46,16 @@ public class DocumentController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return documentService.getUserDocuments(user.getId());
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteDocument(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader
+    ){
+        String token = authHeader.substring(7);
+        String email = jwtUtil.extractEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        documentService.deleteDocument(id, user.getId());
+    }
 }
